@@ -1,10 +1,10 @@
 # CoDiCodec
 
-**CoDiCodec** is a library for encoding and decoding audio samples into compressed continuous **and** discrete representations. It's designed for efficient generative modeling applications, achieving a **128x total compression ratio** using a Consistency Transformer Autoencoder.
+**CoDiCodec** is an autoencoder used to encode/decode audio samples to/from compressed continuous **and** discrete representations. It produces a **~11 Hz representations** for continuous latents and a bitrate of **2.38 kbitps** for discrete tokens. It encodes/decodes stereo audio at **44.1/48 kHz** sample rate.
 
 ## Summary Embeddings
 
-Unlike traditional methods that produce ordered sequences of latents, CoDiCodec's encoder generates an *unordered set* of latent tokens for each timestep, each of which can encode global features about the input audio chunk.  This allows for significantly higher compression because the information needed for reconstruction does not have to be redundantly stored in each individual latent.
+Unlike traditional methods that produce ordered sequences of latents, CoDiCodec's encoder generates a set of latents for each input audio chunk, each of which can encode global features.  This allows for significantly higher compression!
 
 If your input waveform has shape `[audio_channels=2, waveform_samples]`, the encoder outputs a tensor of shape `[timesteps, latents_per_timestep, dim]`. You can then reshape the latents to `[timesteps*latents_per_timestep, dim]` to feed them into a transformer model. If you require a temporally ordered sequence of latents, you can reshape them to `[timesteps, latents_per_timestep*dim]` instead (this may be useful in case you do not use a permutation invariant model, such as a CNN), although the high channel dimension may lead to a higher computational cost in your downstream model.
 
