@@ -1,12 +1,8 @@
+![CoDiCodec Banner](codicodec_banner.jpg)
+
 # CoDiCodec
 
-**CoDiCodec** is an autoencoder used to encode/decode audio samples to/from compressed continuous **and** discrete representations. It produces a **~11 Hz representations** for continuous latents and a bitrate of **2.38 kbitps** for discrete tokens. It encodes/decodes stereo audio at **44.1/48 kHz** sample rate.
-
-## Summary Embeddings
-
-Unlike traditional methods that produce ordered sequences of latents, CoDiCodec's encoder generates a set of latents for each input audio chunk, each of which can encode global features.  This allows for significantly higher compression!
-
-If your input waveform has shape `[audio_channels=2, waveform_samples]`, the encoder outputs a tensor of shape `[timesteps, latents_per_timestep, dim]`. You can then reshape the latents to `[timesteps*latents_per_timestep, dim]` to feed them into a transformer model. If you require a temporally ordered sequence of latents, you can reshape them to `[timesteps, latents_per_timestep*dim]` instead (this may be useful in case you do not use a permutation invariant model, such as a CNN), although the high channel dimension may lead to a higher computational cost in your downstream model.
+**CoDiCodec** is an autoencoder used to encode/decode audio samples to/from compressed continuous **and** discrete representations. It produces a **~11 Hz representations with 64-channels** for continuous latents and a bitrate of **2.38 kbitps** for discrete tokens. It encodes/decodes stereo audio at **44.1/48 kHz** sample rate.
 
 ## Installation
 
@@ -55,12 +51,8 @@ The `encode()` function returns compressed representations.  Here is a breakdown
 
 *   **`max_batch_size`:**  This controls the maximum number of audio chunks processed in parallel during encoding.  Tune this based on your available GPU memory.  A larger `max_batch_size` generally leads to faster encoding, up to the limit of your GPU's capacity.  The default is set in `hparams_inference.py`.
 
-*   **`dont_quantize`:** 
-    *   `dont_quantize=False`: The encoder uses Finite Scalar Quantization (FSQ) to *round* the latent values.
-    *   `dont_quantize=True` (default):  The encoder outputs *continuous-valued* latents without rounding.  This is useful if you need the raw, unquantized values that will result in higher reconstruction quality, since more information is preserved in the latents.
-
 *   **`discrete`:**
-    *   `discrete=False` (default): The encoder returns the latent vectors as floating-point numbers (either quantized or continuous, depending on `dont_quantize`).
+    *   `discrete=False` (default): The encoder returns the continuous latent vectors.
     *   `discrete=True`:  The encoder returns *integer indices* representing the quantized latent codes.  This is essential for training a language model on the compressed representations, as language models typically work with discrete tokens.  The indices correspond to entries in the FSQ codebook.
 
 *   **`preprocess_on_gpu`:**
@@ -104,11 +96,7 @@ The `decode()` function transforms latent representations back into audio wavefo
 *   **`mode`:**
     *   `mode='parallel'` (default): Decodes the entire latent sequence in parallel. This is generally faster for offline processing.
     *   `mode='autoregressive'` : Decodes the sequence step-by-step, using past decoded output to inform the next step.  This is useful for generating longer sequences or for simulating a streaming scenario.
-
 *    **`max_batch_size`:** Similar to `encode()`, this controls the maximum batch size for decoding.
-
-*   **`dont_quantize`:**  Relevant if the input `latent` is *not* discrete.  If `dont_quantize=True`, the decoder expects continuous-valued latents and skips the internal rounding step.
-
 *    **`denoising_steps`**: Number of denoising steps the model takes. It uses the default value specified in `hparams_inference.py` if no argument is supplied.
 *    **`time_prompt`:** Level of noise that is added to past token when doing autoregressive decoding. It uses the default value specified in `hparams_inference.py` if no argument is supplied.
 *   **`preprocess_on_gpu`:**
@@ -147,13 +135,21 @@ encdec.reset()
 
 ## Summary and Best Practices
 
-*   **Choose `dont_quantize=True` and `discrete=False` for maximum reconstruction quality (this is the default behavior).**
+*   **Choose `discrete=False` for maximum reconstruction quality (this is the default behavior).**
 *   **Use `discrete=True` when extracting data for language models.**
 *   **Experiment with `max_batch_size` to optimize encoding/decoding speed.**
 *   **Leverage `fix_batch_size=True` and `torch.compile` for significant speedups.**
 *   **Use `preprocess_on_gpu=True` unless you encounter memory limitations.**
 *   **For live applications, use `decode_next()` and `reset()` for low-latency, seamless decoding.**
 * **The output shape of the encode function is [timesteps, latents_per_timestep, dim] or [batch_size, timesteps, latents_per_timestep, dim] if using batched inputs. When using transformer models you can also concatenate all latents along the same time axis, since transformers do not require an ordered sequence. However, it is recommended to use a learned positional embedding for each latent of the timestep.**
+
+## Summary Embeddings
+
+Unlike traditional methods that produce ordered sequences of latents, CoDiCodec's encoder generates a set of latents for each input audio chunk, each of which can encode global features.  This allows for significantly higher compression!
+
+If your input waveform has shape `[audio_channels=2, waveform_samples]`, the encoder outputs a tensor of shape `[timesteps, latents_per_timestep, dim]`. You can then reshape the latents to `[timesteps*latents_per_timestep, dim]` to feed them into a transformer model. If you require a temporally ordered sequence of latents, you can reshape them to `[timesteps, latents_per_timestep*dim]` instead (this may be useful in case you do not use a permutation invariant model, such as a CNN), although the high channel dimension may lead to a higher computational cost in your downstream model.
+
+![Architecture Diagram](architecture.png)
 
 ## License
 This library is released under the CC BY-NC 4.0 license. Please refer to the LICENSE file for more details.

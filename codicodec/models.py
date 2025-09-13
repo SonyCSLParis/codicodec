@@ -93,7 +93,7 @@ class FSQ(nn.Module):
         """Converts a `code` to an index in the codebook."""
         assert zhat.shape[-1] == self.num_dimensions
         zhat = self._scale_and_shift(zhat)
-        return (zhat * self._basis_tensor).sum(dim=-1).to(torch.int64)
+        return (zhat * self._basis_tensor).sum(dim=-1).round().to(torch.int32)
 
     def indexes_to_codes(self, indices: torch.Tensor) -> torch.Tensor:
         """Inverse of `indexes_to_codes`."""
@@ -617,7 +617,7 @@ class UNet(nn.Module):
         return x
     
     @torch.compile(fullgraph=True, dynamic=False, mode='max-autotune-no-cudagraphs')
-    def encoder_forward_fast(self, x, extract_features=False, dont_quantize=False, log_magnitude=False):
+    def encoder_forward_fast(self, x, dont_quantize=False, log_magnitude=False):
         """torch.compile-optimized variant of encoder_forward with same outputs."""
         assert x.shape[-1]%spec_length==0, f'Input shape {x.shape[-1]} is not divisible by {spec_length}.'
         factor = None

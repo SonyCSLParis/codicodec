@@ -1,4 +1,5 @@
 numpy
+einops
 soundfile
 huggingface_hub
 librosa
