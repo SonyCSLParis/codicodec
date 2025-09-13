@@ -8,7 +8,7 @@
 
 1.  Install via pip:
     ```bash
-    pip install git+https://github.com/SonyCSLParis/codicodec
+    pip install codicodec
     ```
 
 ## Quick Start: Encoding and Decoding
