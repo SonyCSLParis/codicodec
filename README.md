@@ -2,7 +2,9 @@
 
 # CoDiCodec
 
-**CoDiCodec** is an autoencoder used to encode/decode audio samples to/from compressed continuous **and** discrete representations. It produces a **~11 Hz representations with 64-channels** for continuous latents and a bitrate of **2.38 kbitps** for discrete tokens. It encodes/decodes stereo audio at **44.1/48 kHz** sample rate.
+**CoDiCodec** is a generative neural audio **Codec** that highly compresses 44.1/48 kHz stereo audio into both **Co**ntinuous and **Di**screte representations:
+*   **Discrete tokens**: at a bitrate of 2.38 kbit/s.
+*   **Continuous latent vectors**: at a ~11 Hz frame rate with 64 channels (128x compression).
 
 ## Installation
 
