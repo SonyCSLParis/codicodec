@@ -241,7 +241,6 @@ def download_model():
         filename="codicodec.pt",
         cache_dir=local_dir,
         local_dir=local_dir,
-        local_dir_use_symlinks=False,
     )
     # If the file was saved under a nested path, copy/move it into expected location
     if downloaded_path != local_path and os.path.exists(downloaded_path):

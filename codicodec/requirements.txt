@@ -3,4 +3,5 @@ einops
 soundfile
 huggingface_hub
 librosa
+soundfile
 torch>=2.0.1

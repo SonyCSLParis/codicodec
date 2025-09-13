@@ -15,6 +15,7 @@ setup(
         'soundfile',
         'huggingface_hub',
         'librosa',
+        'soundfile',
         'torch',
     ],
     license='CC BY-NC 4.0',
