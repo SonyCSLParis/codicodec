@@ -2,7 +2,7 @@
 
 # CoDiCodec
 
-**CoDiCodec** is a generative neural audio **Codec** that highly compresses 44.1/48 kHz stereo audio into both **Co**ntinuous and **Di**screte representations with SOTA reconstruction quality (as of Sep. 2025):
+**CoDiCodec** is a generative neural audio **Codec** that highly compresses 44.1/48 kHz stereo audio into both **Co**ntinuous and **Di**screte representations with SOTA reconstruction quality (as of Sep. 2025, see [paper](https://arxiv.org/pdf/2509.09836)):
 *   **Discrete tokens**: at a bitrate of 2.38 kbit/s.
 *   **Continuous latent vectors**: at a ~11 Hz frame rate with 64 channels (128x compression).
 
@@ -155,6 +155,7 @@ If your input waveform has shape `[audio_channels=2, waveform_samples]`, the enc
 
 ## License
 This library is released under the CC BY-NC 4.0 license. Please refer to the LICENSE file for more details.
+To obtain a **commercial license**, please contact [music@csl.sony.fr](mailto:music@csl.sony.fr).
 
 
 
