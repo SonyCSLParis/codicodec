@@ -6,6 +6,8 @@
 *   **Discrete tokens**: at a bitrate of 2.38 kbit/s.
 *   **Continuous latent vectors**: at a ~11 Hz frame rate with 64 channels (128x compression).
 
+For sound examples, go [here](https://sonycslparis.github.io/codicodec-companion/).
+
 ## Installation
 
 1.  Install via pip:
