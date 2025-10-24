@@ -149,7 +149,7 @@ def distribute(model, x, max_batch_size, device, *args, **kwargs):
             batch_kwargs = {k: to_device(kwarg_splits[k][i]) for k in kwargs}
 
             with torch.autocast(device_type='cuda' if device.type == 'cuda' else 'cpu', dtype=torch.float16, enabled=mixed_precision):
-                batch_output = model(batch_x, *batch_args, *batch_kwargs)
+                batch_output = model(batch_x, *batch_args, **batch_kwargs)
             if isinstance(batch_output, list):
                 batch_output = [out.to(data_device) for out in batch_output]
             else:
