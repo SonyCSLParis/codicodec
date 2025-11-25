@@ -82,23 +82,23 @@ class FSQ(nn.Module):
 
     def _scale_and_shift(self, zhat_normalized):
         # Scale and shift to range [0, ..., L-1]
-        half_width = self._levels_tensor // 2
+        half_width = self._levels_tensor.to(zhat_normalized.device) // 2
         return (zhat_normalized * half_width) + half_width
 
     def _scale_and_shift_inverse(self, zhat):
-        half_width = self._levels_tensor // 2
+        half_width = self._levels_tensor.to(zhat.device) // 2
         return (zhat - half_width) / half_width
 
     def codes_to_indexes(self, zhat: torch.Tensor) -> torch.Tensor:
         """Converts a `code` to an index in the codebook."""
         assert zhat.shape[-1] == self.num_dimensions
         zhat = self._scale_and_shift(zhat)
-        return (zhat * self._basis_tensor).sum(dim=-1).round().to(torch.int32)
+        return (zhat * self._basis_tensor.to(zhat.device)).sum(dim=-1).round().to(torch.int32)
 
     def indexes_to_codes(self, indices: torch.Tensor) -> torch.Tensor:
         """Inverse of `indexes_to_codes`."""
         indices = indices.unsqueeze(-1)
-        codes_non_centered = torch.div(indices, self._basis_tensor, rounding_mode='floor') % self._levels_tensor
+        codes_non_centered = torch.div(indices, self._basis_tensor.to(indices.device), rounding_mode='floor') % self._levels_tensor.to(indices.device)
         return self._scale_and_shift_inverse(codes_non_centered)
 
 

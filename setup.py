@@ -2,7 +2,7 @@ from setuptools import setup,find_packages
 
 setup(
     name='codicodec',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(),
     description='Encode and decode audio samples to/from continuous and discrete compressed representations!',
     author='Sony Computer Science Laboratories Paris',
